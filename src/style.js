@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, {css} from 'styled-components';
 
 export const Container = styled.div`
     height: 100vh;
@@ -16,13 +16,20 @@ export const UploadWrapper = styled.div`
 
 `;
 
+const drag = css`
+  border: 2px solid #009a48;
+`;
+
+
 export const WrapperListImages = styled.div`
     width: 100%;
     display: flex;
     flex-direction: column;
     padding: 10px;
     max-height: calc(100vh - 80px);
+    min-height: calc(100vh - 80px);
     overflow: auto;
+    ${prop => prop.drag && drag};
 
     #first-button {
         margin-right: 10px;

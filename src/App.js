@@ -1,28 +1,56 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import ImageUploading from 'react-images-uploading';
-import { Container, UploadWrapper, WrapperListImages, ImageItem } from './style';
+import { Container, UploadWrapper, WrapperListImages, ImageItem, Title } from './style';
 import axios from 'axios';
 
 axios.defaults.baseURL = 'http://localhost:5000';
 
 const App = () => {
+  const imagesRef = useRef([]);
   const [images, setImages] = useState([]);
-  const maxNumber = 69;
+  const maxNumber = 20;
+
+
+  useEffect(()=>{
+    imagesRef.current = images
+  }, [images]);
+
   const onChange = (imageList, addUpdateIndex) => {
 
     setImages(imageList);
+
+    setTimeout(() => {
+      addUpdateIndex?.map( async e => {
+        if (! imageList[e]?.predict)
+          return predict(imageList[e],e)
+      });
+      // console.log(list_to_resolve)
+      // if (list_to_resolve)
+      //   Promise.all(list_to_resolve).then(v => {
+      //     const _list = [...imageList]
+      //     v.forEach( i => {
+      //       if (i)
+      //         _list[i[1]] = 
+      //         _list[i[1]] = {..._list[i[1]], predict: i[0]};
+      //     })
+      //     setImages(_list)
+      //   })
+    }, 10);
   };
 
-  const predict = (file, index) => {
+  const predict = async (file, index) => {
     const formData =  new FormData();
     formData.append('image' , file.file);
-    axios.post('/predict', formData).then(({ data }) => {
+    await axios.post('/predict', formData)
+    // .then(res => res.data);
+    .then(({ data }) => {
       setImages(prev => {
-        const _list = [...prev]
+        const _list = [...imagesRef.current]
         _list[index] = {..._list[index], predict: data};
         return _list;
       })
     });
+    // return [resp, index]
   }
 
   const RenderList = ({onImageRemove}) => {
@@ -31,6 +59,9 @@ const App = () => {
         <ImageItem key={index}>
           <img src={image.data_url} alt="" height="80" />
 
+          <span>
+            {image?.file.name}
+          </span>
           <span>
             {image?.predict?.label ?? 'Não processado'}
             {' - '}
@@ -41,7 +72,7 @@ const App = () => {
 
           <div className="image-item__btn-wrapper">
             <button id="first-button" onClick={() => predict(image, index)}>Processar</button>
-            <button onClick={() => onImageRemove(index)}>Remove</button>
+            <button onClick={() => onImageRemove(index)}>Remover</button>
           </div>
         </ImageItem>
       ))
@@ -78,7 +109,7 @@ const App = () => {
               &nbsp;
               <button onClick={onImageRemoveAll}>Remover todas as imagens</button>
             </UploadWrapper>
-            <WrapperListImages>
+            <WrapperListImages {...dragProps} drag={isDragging}>
               <RenderList onImageRemove={onImageRemove} />
             </WrapperListImages>
           </>
