@@ -2,8 +2,9 @@ import { useState, useRef, useEffect } from 'react';
 import ImageUploading from 'react-images-uploading';
 import { Container, UploadWrapper, WrapperListImages, ImageItem, Title } from './style';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
-axios.defaults.baseURL = 'http://localhost:5000';
+axios.defaults.baseURL = 'http://3.136.23.106:5000';
 
 const App = () => {
   const imagesRef = useRef([]);
@@ -108,6 +109,9 @@ const App = () => {
               </button>
               &nbsp;
               <button onClick={onImageRemoveAll}>Remover todas as imagens</button>
+              <Link to='/info' style={{marginLeft: 10}}>
+                Ver informações
+              </Link>
             </UploadWrapper>
             <WrapperListImages {...dragProps} drag={isDragging}>
               <RenderList onImageRemove={onImageRemove} />
