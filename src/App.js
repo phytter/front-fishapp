@@ -4,7 +4,8 @@ import { Container, UploadWrapper, WrapperListImages, ImageItem, Title } from '.
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 
-axios.defaults.baseURL = 'http://3.136.23.106:5000';
+// axios.defaults.baseURL = 'http://3.136.23.106:5000';
+axios.defaults.baseURL = process.env.API_URL || 'http://localhost:5000';
 
 const App = () => {
   const imagesRef = useRef([]);
