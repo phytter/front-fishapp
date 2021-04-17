@@ -1,11 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
 import ImageUploading from 'react-images-uploading';
-import { Container, UploadWrapper, WrapperListImages, ImageItem, Title } from './style';
+import { Container, UploadWrapper, WrapperListImages, ImageItem } from './style';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 
-// axios.defaults.baseURL = 'http://3.136.23.106:5000';
-axios.defaults.baseURL = process.env.API_URL || 'http://localhost:5000';
+axios.defaults.baseURL = process.env.API_URL || 'http://localhost:8000';
 
 const App = () => {
   const imagesRef = useRef([]);
@@ -13,7 +12,7 @@ const App = () => {
   const maxNumber = 20;
 
 
-  useEffect(()=>{
+  useEffect(() => {
     imagesRef.current = images
   }, [images]);
 
@@ -22,40 +21,27 @@ const App = () => {
     setImages(imageList);
 
     setTimeout(() => {
-      addUpdateIndex?.map( async e => {
-        if (! imageList[e]?.predict)
-          return predict(imageList[e],e)
+      addUpdateIndex?.map(async e => {
+        if (!imageList[e]?.predict)
+          return predict(imageList[e], e)
       });
-      // console.log(list_to_resolve)
-      // if (list_to_resolve)
-      //   Promise.all(list_to_resolve).then(v => {
-      //     const _list = [...imageList]
-      //     v.forEach( i => {
-      //       if (i)
-      //         _list[i[1]] = 
-      //         _list[i[1]] = {..._list[i[1]], predict: i[0]};
-      //     })
-      //     setImages(_list)
-      //   })
     }, 10);
   };
 
   const predict = async (file, index) => {
-    const formData =  new FormData();
-    formData.append('image' , file.file);
+    const formData = new FormData();
+    formData.append('file', file.file);
     await axios.post('/predict', formData)
-    // .then(res => res.data);
-    .then(({ data }) => {
-      setImages(prev => {
-        const _list = [...imagesRef.current]
-        _list[index] = {..._list[index], predict: data};
-        return _list;
-      })
-    });
-    // return [resp, index]
+      .then(({ data }) => {
+        setImages(prev => {
+          const _list = [...imagesRef.current]
+          _list[index] = { ..._list[index], predict: data };
+          return _list;
+        })
+      });
   }
 
-  const RenderList = ({onImageRemove}) => {
+  const RenderList = ({ onImageRemove }) => {
     return (
       images.map((image, index) => (
         <ImageItem key={index}>
@@ -67,8 +53,8 @@ const App = () => {
           <span>
             {image?.predict?.label ?? 'Não processado'}
             {' - '}
-            { image?.predict?.score &&
-                (parseFloat(image?.predict?.score) * 100).toFixed(2)
+            {image?.predict?.score &&
+              (parseFloat(image?.predict?.score) * 100).toFixed(2)
             } %
           </span>
 
@@ -110,7 +96,7 @@ const App = () => {
               </button>
               &nbsp;
               <button onClick={onImageRemoveAll}>Remover todas as imagens</button>
-              <Link to='/info' style={{marginLeft: 10}}>
+              <Link to='/info' style={{ marginLeft: 10 }}>
                 Ver informações
               </Link>
             </UploadWrapper>

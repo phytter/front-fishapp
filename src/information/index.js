@@ -1,21 +1,39 @@
-import { Title, Title2, Container, List } from './styles'
+import { useEffect, useState } from 'react';
+import { Title, Title2, Container, List } from './styles';
+import axios from 'axios';
 
-const list = ['Lambari','hibrido_tambaqui_pirapitinga','Lambari_rosa','Carpas_coloridas_KOI','Cachara_pura','Tambatinga','Jundia_rosa','Carpa_capim','Tambaqui','Pintado_jundiara','Pacu'];
+const Information = () => {
 
-export default () => {
+    const [list, setList] = useState([]);
+
+    const getClasses = async () => {
+        try {
+            const res = await axios.get('/available-classes');
+            setList(res.data.classes);
+        } catch (error) {
+            alert('Não foi possível trazer as classes.')
+        }
+    }
+
+    useEffect(() => {
+        getClasses();
+    }, []);
+
     return <Container>
         <Title>
             Informações
         </Title>
-        <Title2>11 especies de alevinos, sendo:</Title2>
+        <Title2>{list?.length} especies de alevinos, sendo:</Title2>
         <List>
             {
-                list.sort().map((v) => 
+                list?.sort().map((v) =>
                     <li key={v}>
                         {v.replace(/_/g, ' ')}
                     </li>
                 )
             }
         </List>
-        </Container>
+    </Container>
 }
+
+export default Information;
