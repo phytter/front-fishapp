@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import ImageUploading from 'react-images-uploading';
-import { Container, UploadWrapper, WrapperListImages, ImageItem } from './style';
+import { Container, UploadWrapper, WrapperListImages, ImageItem, DropArea } from './style';
 import axios from 'axios';
+import { ImUpload } from 'react-icons/im';
 import { Link } from 'react-router-dom';
 
 axios.defaults.baseURL = process.env.API_URL || 'http://localhost:8000';
@@ -9,7 +10,7 @@ axios.defaults.baseURL = process.env.API_URL || 'http://localhost:8000';
 const App = () => {
   const imagesRef = useRef([]);
   const [images, setImages] = useState([]);
-  const maxNumber = 20;
+  const maxNumber = 50;
 
 
   useEffect(() => {
@@ -86,23 +87,26 @@ const App = () => {
           dragProps
         }) => (
           <>
-            <UploadWrapper>
-              <button
-                style={isDragging ? { color: "red" } : null}
-                onClick={onImageUpload}
-                {...dragProps}
-              >
-                Clique ou solte aqui
-              </button>
-              &nbsp;
-              <button onClick={onImageRemoveAll}>Remover todas as imagens</button>
-              <Link to='/info' style={{ marginLeft: 10 }}>
-                Ver informações
-              </Link>
-            </UploadWrapper>
-            <WrapperListImages {...dragProps} drag={isDragging}>
-              <RenderList onImageRemove={onImageRemove} />
-            </WrapperListImages>
+            {
+              !!images.length && (
+                <>
+                  <UploadWrapper>
+                    <button className='btn' onClick={onImageRemoveAll}>Remover todas as imagens</button>
+                  </UploadWrapper>
+                  <WrapperListImages {...dragProps} drag={isDragging}>
+                    <RenderList onImageRemove={onImageRemove} />
+                  </WrapperListImages>
+                </>
+              )
+            }
+            {
+              !images.length && (
+                <DropArea {...dragProps} isDragging={isDragging} onClick={onImageUpload}>
+                  <ImUpload size={80} color="#707070" />
+                  <span className="description">Arraste imagens ou clique aqui</span>
+                </DropArea>
+              )
+            }
           </>
         )}
       </ImageUploading>

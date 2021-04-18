@@ -5,11 +5,14 @@ import GlobalStyle from './globalStyle'
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
 import Route from './routes';
+import Layout from './layout';
 
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
-      <Route />
+      <Layout>
+        <Route />
+      </Layout>
       <GlobalStyle />
     </BrowserRouter>
   </React.StrictMode>,

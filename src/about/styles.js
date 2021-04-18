@@ -29,3 +29,17 @@ export const List = styled.ul`
         font-size: 20px;
     }
 `;
+
+export const Description = styled.div`
+    margin-top: 20px;
+    width: 100%;
+    font-size: 18px;
+    padding-left: 20px;
+    li {
+        margin-top: 10px;
+        font: 1.2rem 'Fira Sans', sans-serif;
+    }
+    ul {
+        list-style: disc;
+    }
+`;

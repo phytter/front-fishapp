@@ -21,7 +21,7 @@ const Information = () => {
 
     return <Container>
         <Title>
-            Informações
+            Informações de espécies suportadas
         </Title>
         <Title2>{list?.length} especies de alevinos, sendo:</Title2>
         <List>
