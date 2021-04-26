@@ -21,6 +21,9 @@ export const UploadWrapper = styled.div`
     .btn: hover {
         background: #F17E84;
     }
+    .btn-send{
+        margin-right: 10px;
+    }
 `;
 
 const drag = css`

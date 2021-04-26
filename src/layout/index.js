@@ -1,13 +1,14 @@
 import { Container } from './styles';
+import { Link } from 'react-router-dom';
 
 const Layout = ({ children }) => {
   return (
     <Container>
       <div className='header'>
         <nav>
-          <a href="/">Início</a>
-          <a href="/especies">Espécies</a>
-          <a href="/sobre">Sobre</a>
+          <Link to="/">Início</Link>
+          <Link to="/especies">Espécies</Link>
+          <Link to="/sobre">Sobre</Link>
         </nav>
       </div>
       <section className='content'>

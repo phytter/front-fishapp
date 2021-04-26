@@ -1,0 +1,9 @@
+{
+  "MODEL_URL": "https://storage.googleapis.com/base_dados/modeljs2/model.json",
+  "IMAGE_SIZE": 299,
+  "CLASSES": [
+    "Tambaqui",
+    "Pacu",
+    "Tambatinga"
+  ]
+}

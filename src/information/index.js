@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Title, Title2, Container, List } from './styles';
-import axios from 'axios';
+import modelConfig from '../config/model.json';
 
 const Information = () => {
 
@@ -8,8 +8,7 @@ const Information = () => {
 
     const getClasses = async () => {
         try {
-            const res = await axios.get('/available-classes');
-            setList(res.data.classes);
+            setList(modelConfig.CLASSES);
         } catch (error) {
             alert('Não foi possível trazer as classes.')
         }

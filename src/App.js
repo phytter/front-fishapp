@@ -1,21 +1,42 @@
 import { useState, useRef, useEffect } from 'react';
 import ImageUploading from 'react-images-uploading';
 import { Container, UploadWrapper, WrapperListImages, ImageItem, DropArea } from './style';
-import axios from 'axios';
 import { ImUpload } from 'react-icons/im';
-import { Link } from 'react-router-dom';
+import Recognizer from './recognizer';
+import modelConfig from './config/model.json';
 
-axios.defaults.baseURL = process.env.API_URL || 'http://localhost:8000';
+const IMAGE_SIZE = modelConfig.IMAGE_SIZE;
 
 const App = () => {
+
   const imagesRef = useRef([]);
   const [images, setImages] = useState([]);
+  const [recognizer, setRecognizer] = useState(null);
   const maxNumber = 50;
 
 
   useEffect(() => {
     imagesRef.current = images
   }, [images]);
+
+  useEffect(() => {
+    const _recognizer = new Recognizer(modelConfig.MODEL_URL, ["Tambaqui", "Pacu", "Tambatinga"]);
+    setRecognizer(_recognizer);
+  }, []);
+
+  const downloadFile = async () => {
+    let myData = images.map((image) => ({ file_name: image.file.name, predict: image.predict }));
+    const fileName = "resultados";
+    const json = JSON.stringify(myData);
+    const blob = new Blob([json], { type: 'application/json' });
+    const href = await URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = href;
+    link.download = fileName + ".json";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
 
   const onChange = (imageList, addUpdateIndex) => {
 
@@ -29,17 +50,33 @@ const App = () => {
     }, 10);
   };
 
-  const predict = async (file, index) => {
-    const formData = new FormData();
-    formData.append('file', file.file);
-    await axios.post('/predict', formData)
-      .then(({ data }) => {
+  const predict = async ({ file }, index) => {
+    if (!file.type.match('image.*')) {
+      return;
+    }
+    let reader = new FileReader();
+    reader.onload = e => {
+
+      let img = document.createElement('img');
+      img.src = e.target.result;
+      img.width = IMAGE_SIZE;
+      img.height = IMAGE_SIZE;
+      img.onload = async () => {
+        const predicted = await recognizer.predict(img);
         setImages(prev => {
-          const _list = [...imagesRef.current]
-          _list[index] = { ..._list[index], predict: data };
+          const _list = [...imagesRef.current];
+          _list[index] = { ..._list[index], predict: predicted };
           return _list;
-        })
-      });
+        });
+      };
+    };
+
+    reader.readAsDataURL(file);
+  }
+
+  const showPredict = (predict) => {
+    if (!predict) return 'Carregando...';
+    return `${predict?.label} - ${(parseFloat(predict?.score) * 100).toFixed(2)} %`;
   }
 
   const RenderList = ({ onImageRemove }) => {
@@ -52,11 +89,7 @@ const App = () => {
             {image?.file.name}
           </span>
           <span>
-            {image?.predict?.label ?? 'Não processado'}
-            {' - '}
-            {image?.predict?.score &&
-              (parseFloat(image?.predict?.score) * 100).toFixed(2)
-            } %
+            {showPredict(image?.predict)}
           </span>
 
           <div className="image-item__btn-wrapper">
@@ -91,6 +124,8 @@ const App = () => {
               !!images.length && (
                 <>
                   <UploadWrapper>
+                    <button className='btn-send' onClick={onImageUpload}>Enviar imagem</button>
+                    <button className='btn-send' onClick={downloadFile}>Baixar resultados</button>
                     <button className='btn' onClick={onImageRemoveAll}>Remover todas as imagens</button>
                   </UploadWrapper>
                   <WrapperListImages {...dragProps} drag={isDragging}>
