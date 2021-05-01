@@ -3,7 +3,7 @@ import Info from './information/index';
 import About from './about/index';
 import App from './App'
 
-export default () => (
+const Router = () => (
     <Switch>
         <Route exact path="/">
             <App />
@@ -19,3 +19,5 @@ export default () => (
         </Route>
     </Switch>
 );
+
+export default Router;
