@@ -91,6 +91,8 @@ const App = () => {
               !!images.length && (
                 <>
                   <UploadWrapper>
+                    <button className='btn-send' onClick={onImageUpload}>Enviar imagem</button>
+                    <button className='btn-send'>Baixar resultados</button>
                     <button className='btn' onClick={onImageRemoveAll}>Remover todas as imagens</button>
                   </UploadWrapper>
                   <WrapperListImages {...dragProps} drag={isDragging}>
