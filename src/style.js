@@ -18,6 +18,9 @@ export const UploadWrapper = styled.div`
         border-width: thin;
         border-radius: 3px;
     }
+    .btn-send {
+        margin-right: 5px;
+    }
     .btn: hover {
         background: #F17E84;
     }
@@ -73,6 +76,10 @@ export const ImageItem = styled.div`
 
     &:hover {
         background-color: #E0E0E0;
+    }
+
+    span {
+        color: ${({ isConfident }) => isConfident ? 'green' : 'red'};
     }
 `;
 

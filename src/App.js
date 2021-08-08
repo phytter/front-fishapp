@@ -12,6 +12,19 @@ const App = () => {
   const [images, setImages] = useState([]);
   const maxNumber = 50;
 
+  const downloadFile = async () => {
+    let myData = images.map((image) => ({ file_name: image.file.name, predict: image.predict }));
+    const fileName = "resultados";
+    const json = JSON.stringify(myData);
+    const blob = new Blob([json], { type: 'application/json' });
+    const href = await URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = href;
+    link.download = fileName + ".json";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
 
   useEffect(() => {
     imagesRef.current = images
@@ -45,7 +58,7 @@ const App = () => {
   const RenderList = ({ onImageRemove }) => {
     return (
       images.map((image, index) => (
-        <ImageItem key={index}>
+        <ImageItem key={index} isConfident={parseFloat(image?.predict?.score ?? 0) >= 0.5}>
           <img src={image.data_url} alt="" height="80" />
 
           <span>
@@ -92,7 +105,7 @@ const App = () => {
                 <>
                   <UploadWrapper>
                     <button className='btn-send' onClick={onImageUpload}>Enviar imagem</button>
-                    <button className='btn-send'>Baixar resultados</button>
+                    <button className='btn-send' onClick={downloadFile}>Baixar resultados</button>
                     <button className='btn' onClick={onImageRemoveAll}>Remover todas as imagens</button>
                   </UploadWrapper>
                   <WrapperListImages {...dragProps} drag={isDragging}>
